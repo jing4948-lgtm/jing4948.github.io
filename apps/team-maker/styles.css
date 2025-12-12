@@ -1,0 +1,25 @@
+/* apps/team-maker/styles.css */
+.app-header{ display:flex; align-items:center; gap:12px; padding:16px; border-bottom:1px solid var(--border); background:#fff; }
+.app-header .back{ text-decoration:none; color:var(--accent); }
+.app-header h1{ margin:0; font-size:1.2rem; }
+
+.layout{ display:grid; grid-template-columns: 360px 1fr; gap:16px; padding:16px; }
+.controls{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; }
+.field{ margin-bottom:12px; }
+.field label{ display:block; margin-bottom:6px; }
+textarea{ width:100%; resize:vertical; }
+.actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.actions button{ padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer; }
+.actions button:hover{ border-color:var(--accent); }
+.paper{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; min-height:60vh; }
+.result{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
+.team{ border:1px solid var(--border); border-radius:12px; padding:12px; }
+.team h3{ margin:0 0 8px; color:var(--accent); }
+.team ol{ margin:0 0 0 20px; }
+.placeholder{ color:var(--muted); }
+
+@media print {
+  .app-header, .controls{ display:none !important; }
+  .paper{ border:none; padding:0; }
+  .team{ border:none; }
+}

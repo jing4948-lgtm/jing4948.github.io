@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>학습지·퀴즈 생성기</title>
+  <link rel="stylesheet" href="../../styles/common.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="back" href="../../index.html">← 홈</a>
+    <h1>학습지·퀴즈 생성기</h1>
+  </header>
+
+  <main class="layout">
+    <section class="controls">
+      <div class="field">
+        <label>학년</label>
+        <select id="grade">
+          <option value="1">1학년</option>
+          <option value="2" selected>2학년</option>
+          <option value="3">3학년</option>
+          <option value="4">4학년</option>
+          <option value="5">5학년</option>
+          <option value="6">6학년</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>문항 수</label>
+        <input id="count" type="number" min="4" max="120" step="2" value="20">
+      </div>
+
+      <fieldset class="field">
+        <legend>문제 유형(복수 선택)</legend>
+        <label><input type="checkbox" value="add" checked> 덧셈</label>
+        <label><input type="checkbox" value="sub" checked> 뺄셈</label>
+        <label><input type="checkbox" value="mul"> 곱셈(구구단)</label>
+        <label><input type="checkbox" value="div"> 나눗셈(나머지 없음)</label>
+      </fieldset>
+
+      <div class="field">
+        <label>난이도</label>
+        <select id="level">
+          <option value="easy">쉬움</option>
+          <option value="normal" selected>보통</option>
+          <option value="hard">어려움</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button id="btn-generate">문제 생성</button>
+        <button id="btn-answers" disabled>정답지 보기</button>
+        <button id="btn-print" disabled>인쇄/ PDF 저장</button>
+        <button id="btn-clear">지우기</button>
+      </div>
+
+      <details class="tip">
+        <summary>사용 팁</summary>
+        <ul>
+          <li>브라우저의 “인쇄”에서 <b>“PDF로 저장”</b>을 선택하면 바로 PDF를 만들 수 있어요.</li>
+          <li>같은 설정으로 다시 만들면 다른 문제가 생성됩니다(랜덤 시드).</li>
+        </ul>
+      </details>
+    </section>
+
+    <section class="paper">
+      <div id="sheet" class="sheet" aria-live="polite">
+        <p class="placeholder">왼쪽에서 설정을 고르고 <b>문제 생성</b> 버튼을 눌러주세요.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
