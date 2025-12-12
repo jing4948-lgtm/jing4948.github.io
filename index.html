@@ -1,11 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>교사용 도구 모음</title>
-  <link rel="stylesheet" href="styles/common.css">
-  <link rel="manifest" href="manifest.webmanifest">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인 페이지</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header class="site-header">
@@ -30,13 +29,11 @@
     <small>© 2025 교사용 도구. AI융합교육대학원 과제로 만들어 봄.</small>
   </footer>
 
-  <script>
-    // 간단한 PWA 설치
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js');
-      });
-    }
-  </script>
+<main>
+        <h1>환영합니다!</h1>
+        <p>여기는 메인 바다 페이지입니다.</p>
+    </main>
+
+    <script src="js/nav.js"></script>
 </body>
 </html>
