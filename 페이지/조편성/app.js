@@ -1,14 +1,8 @@
-// 페이지/조편성/app.js (PATCHED 2025-12-12)
-// 변경 사항
-// 1) 이름 파싱 강화: \r, \n, 유니코드 줄바꿈, 제로폭 문자 제거, 탭/중복 공백 정리
-// 2) 줄 단위가 아닌 "공백/쉼표로 구분된" 입력도 지원 (엑셀/메신저 붙여넣기 보호)
-// 3) 중복 제거를 하지 않음(동명이인 허용). 필요 시 toggle 가능하도록 옵션만 남김.
-// 4) 인식된 인원 수를 즉시 표시(#names-count).
-
+// 페이지/조편성/app.js (FIXED)
 (function(){
   const $ = (s)=>document.querySelector(s);
-  const $$ = (s)=>Array.from(document.querySelectorAll(s));
-
+  
+  // 요소 가져오기
   const txt = $('#names');
   const mode = $('#mode');
   const param = $('#param');
@@ -20,55 +14,78 @@
   const mustTogether = $('#mustTogether');
   const avoidTogether = $('#avoidTogether');
 
-  // (옵션) 중복 제거 스위치가 있으면 반영
+  // (옵션) 중복 제거 토글
   let dedupe = false;
-  const dedupeToggle = $('#dedupe'); // 없으면 무시
+  const dedupeToggle = $('#dedupe');
 
+  // 1. 텍스트 정리 함수
   function normalizeText(t){
     return (t||'')
-      .replace(/[\u200B-\u200D\uFEFF]/g,'')     // zero-width 제거
-      .replace(/\t/g,' ')                       // 탭 → 공백
-      .replace(/\u00A0/g,' ')                   // nbsp → 공백
-      .replace(/\s+\r?\n/g, '\n')               // 줄 끝 공백 제거
+      .replace(/[\u200B-\u200D\uFEFF]/g,'')     // 숨겨진 특수문자 제거
+      .replace(/\t/g,' ')                       // 탭 -> 공백
+      .replace(/\u00A0/g,' ')                   // nbsp -> 공백
       .trim();
   }
 
+  // 2. 이름 파싱 함수 (핵심 수정 부분)
   function parseNames(){
-    const raw = normalizeText(txt.value);
+    // [수정] txt가 null이거나, textarea가 아닌 div일 경우를 대비해 값 읽기 방식 강화
+    if (!txt) return [];
+    
+    // textarea/input은 .value, 그 외(div 등)는 .innerText 사용
+    let rawValue = (txt.value !== undefined) ? txt.value : (txt.innerText || '');
+    
+    const raw = normalizeText(rawValue);
     if (!raw) return [];
-    // 1차: 다양한 줄바꿈으로 split
+
+    // 줄바꿈 문자 통일 및 분리
     let parts = raw.split(/\r\n|[\n\r\u2028\u2029]/);
-    // 어떤 사용자는 줄바꿈 없이 공백/쉼표로만 구분해서 붙여넣기도 함 → 보조 처리
-    if (parts.length === 1) {
+
+    // 줄바꿈 없이 쉼표나 공백으로만 구분된 경우 처리
+    if (parts.length === 1 && raw.length > 0) {
       parts = raw.split(/[,\s]+/);
     }
+
     const names = [];
     for (const line of parts){
       const s = String(line).trim();
       if (!s) continue;
-      // CSV의 첫 셀만 사용 (홍길동,남 → 홍길동)
+      // 콤마가 있으면 앞부분만 이름으로 사용 (예: 홍길동,남 -> 홍길동)
       const first = s.split(',')[0].trim();
       if (first) names.push(first);
     }
+
+    // 중복 제거 옵션 처리
     if (dedupe && names.length){
-      // 중복 제거 옵션이 켜진 경우에만 적용
       return Array.from(new Set(names));
     }
     return names;
   }
 
-  // 실시간 인원 표시
+  // 3. 인원 수 실시간 표시 (디버깅용으로도 유용)
   const counter = document.createElement('div');
   counter.id = 'names-count';
-  counter.style.cssText = 'margin:6px 0 0; color:#555; font-size:.9rem;';
-  txt?.parentElement?.appendChild(counter);
+  counter.style.cssText = 'margin:6px 0 0; color:#007bff; font-weight:bold; font-size:.9rem;';
+  
+  // txt 요소가 있을 때만 카운터 붙이기
+  if(txt?.parentElement) {
+    txt.parentElement.appendChild(counter);
+  }
+
   function updateCount(){
     const n = parseNames().length;
-    counter.textContent = `인식된 인원: ${n}명`;
+    // 여기서 n이 0이면 코드가 이름을 못 읽고 있다는 뜻입니다.
+    counter.textContent = `현재 인식된 인원: ${n}명`;
   }
-  txt?.addEventListener('input', updateCount);
-  dedupeToggle?.addEventListener('change', ()=>{ dedupe = !!dedupeToggle.checked; updateCount(); });
+
+  // 이벤트 리스너 연결
+  if(txt) txt.addEventListener('input', updateCount);
+  if(dedupeToggle) dedupeToggle.addEventListener('change', ()=>{ dedupe = !!dedupeToggle.checked; updateCount(); });
+  
+  // 초기 카운트 실행
   updateCount();
+
+  // --- 이하 로직은 기존과 동일 ---
 
   function shuffle(a){
     const arr = a.slice();
@@ -79,8 +96,9 @@
     return arr;
   }
 
-  function splitPairs(raw){
-    const s = (raw.value||'').trim();
+  function splitPairs(rawInput){ // 변수명 충돌 방지 위해 rawInput으로 변경
+    const el = rawInput; // 요소 자체를 받음
+    const s = (el?.value || '').trim();
     if(!s) return [];
     return s.split(/[\s,]+/).map(x=>x.trim()).filter(Boolean);
   }
@@ -119,6 +137,8 @@
       });
       if(gi===-1 || gj===-1) continue;
       if(gi===gj) continue;
+      
+      // 더 적은 쪽으로 이동
       if(groups[gi].length <= groups[gj].length){
         groups[gi].push(b);
         groups[gj].splice(jb,1);
@@ -148,7 +168,7 @@
     groups.forEach((g, idx)=>{
       const d=document.createElement('div');
       d.className='team';
-      d.innerHTML = `<h3>${idx+1}팀 (${g.length}명)</h3>`;
+      d.innerHTML = `<h3>${idx+1}팀 <small>(${g.length}명)</small></h3>`;
       const ol=document.createElement('ol');
       g.forEach(n=>{ const li=document.createElement('li'); li.textContent=n; ol.appendChild(li); });
       d.appendChild(ol);
@@ -158,8 +178,12 @@
 
   function doAssign(){
     const names = parseNames();
+    
+    // 디버깅: 실제로 몇 명이 인식되었는지 콘솔에 출력
+    console.log('Assigning names:', names); 
+
     if(names.length < 2){
-      alert('이름을 두 명 이상 입력하세요.');
+      alert(`입력된 이름이 부족합니다. (현재 인식된 인원: ${names.length}명)\n이름 목록을 확인해주세요.`);
       return;
     }
     const m = mode.value;
@@ -188,8 +212,13 @@
     btnPrint.disabled=false;
   }
 
-  btnAssign.addEventListener('click', doAssign);
-  btnShuffle.addEventListener('click', doAssign);
-  btnPrint.addEventListener('click', ()=>window.print());
-  btnClear.addEventListener('click', ()=>{ result.innerHTML='<p class="placeholder">이름을 입력하고 <b>배정하기</b>를 눌러주세요.</p>'; btnPrint.disabled=true; });
+  // 버튼 이벤트 연결 (요소가 존재할 때만)
+  if(btnAssign) btnAssign.addEventListener('click', doAssign);
+  if(btnShuffle) btnShuffle.addEventListener('click', doAssign);
+  if(btnPrint) btnPrint.addEventListener('click', ()=>window.print());
+  if(btnClear) btnClear.addEventListener('click', ()=>{ 
+      result.innerHTML='<p class="placeholder">결과가 여기 표시됩니다.</p>'; 
+      btnPrint.disabled=true; 
+  });
+
 })();
