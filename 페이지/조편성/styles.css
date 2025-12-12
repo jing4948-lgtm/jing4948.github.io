@@ -1,0 +1,47 @@
+/* 이 파일은 각 앱 폴더 안에서만 사용되는 최소 스타일입니다. */
+/* 기존 /CSS/styles.css의 배경/폰트는 그대로 유지됩니다. */
+:root {
+  --box-bg: #ffffff;
+  --box-border: rgba(0,0,0,.08);
+  --accent: #2a7bf6;
+}
+
+.app-wrap{ 
+  max-width: 1100px; margin: 24px auto; padding: 0 16px;
+}
+.app-card{
+  background: var(--box-bg);
+  border: 1px solid var(--box-border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.04);
+}
+.app-title{ margin: 0 0 12px; font-size: 1.4rem; color: #222; }
+.app-grid{ display: grid; grid-template-columns: 360px 1fr; gap: 16px; }
+@media (max-width: 840px){
+  .app-grid{ grid-template-columns: 1fr; }
+}
+.controls .field{ margin-bottom: 12px; }
+.controls label{ display:block; font-weight:600; margin-bottom:6px; }
+.controls input[type="number"], .controls select, .controls textarea, .controls input[type="text"]{
+  width:100%; padding:8px 10px; border:1px solid var(--box-border); border-radius:8px; background:#fff;
+}
+.controls fieldset{ border:1px solid var(--box-border); border-radius:8px; }
+.controls legend{ font-size:.95rem; padding:0 4px; }
+.controls .btns{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.controls button{ padding:8px 12px; border-radius:10px; border:1px solid var(--box-border); background:#fff; cursor:pointer; }
+.controls button:hover{ border-color: var(--accent); }
+.paper{ min-height: 60vh; }
+.placeholder{ color:#666; }
+
+/* 인쇄: 컨트롤 숨기고 내용만 */
+@media print {
+  .controls{ display:none !important; }
+  .app-wrap{ margin: 0; padding: 0; }
+  .app-card{ border:none; box-shadow:none; }
+}
+
+.result{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
+.team{ border:1px solid rgba(0,0,0,.1); border-radius:12px; padding:12px; }
+.team h3{ margin:0 0 8px; color: var(--accent); }
+.team ol{ margin:0 0 0 20px; }
