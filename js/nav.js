@@ -1,74 +1,47 @@
-<!doctype html>
-<html lang="ko">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>학습지·퀴즈 생성기</title>
-    <link rel="stylesheet" href="../../css/styles.css">
-    <link rel="stylesheet" href="styles.css"></head>
-<body>
+document.addEventListener("DOMContentLoaded", function() {
+    // 🌟🌟🌟 최종 수정: 현재 URL의 깊이를 정확히 계산하여 rootPath 설정 🌟🌟🌟
+
+    const path = window.location.pathname;
     
-    <div class="app-wrap">
-        <div class="app-card">
-            <h1 class="app-title">학습지·퀴즈 생성기</h1>
-            <div class="app-grid">
-                <section class="controls">
-                    <div class="field">
-                        <label>학년</label>
-                        <select id="grade">
-                            <option value="1">1학년</option>
-                            <option value="2" selected>2학년</option>
-                            <option value="3">3학년</option>
-                            <option value="4">4학년</option>
-                            <option value="5">5학년</option>
-                            <option value="6">6학년</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label>문항 수</label>
-                        <input id="count" type="number" min="4" max="120" step="2" value="20">
-                    </div>
-                    
-                    <fieldset class="field">
-                        <legend>문제 유형(복수 선택)</legend>
-                        <label><input type="checkbox" value="add" checked> 덧셈</label>
-                        <label><input type="checkbox" value="sub" checked> 뺄셈</label>
-                        <label><input type="checkbox" value="mul"> 곱셈(구구단)</label>
-                        <label><input type="checkbox" value="div"> 나눗셈(나머지 없음)</label>
-                    </fieldset>
-                    <div class="field">
-                        <label>난이도</label>
-                        <select id="level">
-                            <option value="easy">쉬움</option>
-                            <option value="normal" selected>보통</option>
-                            <option value="hard">어려움</option>
-                        </select>
-                    </div>
-                    <div class="btns">
-                        <button id="btn-generate">문제 생성</button>
-                        <button id="btn-answers" disabled>정답지 보기</button>
-                        <button id="btn-print" disabled>인쇄/ PDF 저장</button>
-                        <button id="btn-clear">지우기</button>
-                    </div>
-                    <details style="margin-top:8px;">
-                        <summary>사용 팁</summary>
-                        <ul>
-                            <li>브라우저의 “인쇄”에서 <b>“PDF로 저장”</b>을 선택하면 바로 PDF를 만들 수 있어요.</li>
-                            <li>같은 설정으로 다시 만들면 다른 문제가 생성됩니다(랜덤 시드).</li>
-                        </ul>
-                    </details>
-                </section>
+    // 1. 현재 경로의 깊이 계산
+    // 예: /index.html -> 1
+    // 예: /페이지/조편성/index.html -> 3
+    // 'http://.../index.html'에서 파일 이름 부분만 제거하고 '/'로 분리하여 폴더 깊이를 계산
+    const parts = path.split('/').filter(p => p.length > 0 && p !== 'index.html');
+    const depth = parts.length; 
 
-                <section class="paper app-card">
-                    <div id="sheet" class="sheet" aria-live="polite">
-                        <p class="placeholder">왼쪽에서 설정을 고르고 <b>문제 생성</b>을 눌러주세요.</p>
-                    </div>
-                </section>
-            </div>
-        </div>
-    </div>
+    let rootPath = ''; // 기본값 (최상위 index.html에 있을 경우)
 
-    <script src="../../js/nav.js"></script>
-    <script src="app.js"></script>
-</body>
-</html>
+    // 2. 깊이에 따라 rootPath 설정 (../ 반복)
+    // depth가 0 (최상위)이 아니면, 각 레벨마다 '../'가 필요합니다.
+    if (depth > 0) {
+        // '../' * depth 만큼 반복하여 경로를 만듭니다.
+        // 예: depth=1 ('페이지') -> '../'
+        // 예: depth=2 ('페이지/조편성') -> '../../'
+        for (let i = 0; i < depth; i++) {
+            rootPath += '../';
+        }
+    } else {
+        rootPath = './';
+    }
+    
+    // GitHub Pages 특성상 index.html이 포함되지 않을 수 있으므로, depth=1일 때도 ../로 처리
+    // 단, 우리가 사용하는 구조는 /페이지/폴더/index.html 이므로 depth=2(페이지/폴더)에서 '../../'이 필요합니다.
+    // 위의 로직으로 /페이지/조편성/index.html의 depth는 2가 되며, rootPath는 '../../'이 됩니다.
+    // /index.html의 depth는 0이 되며, rootPath는 './'가 됩니다. (가장 안정적)
+
+
+    const navHTML = `
+        <nav>
+            <a href="${rootPath}index.html" class="logo">My Ocean View</a>
+            <ul>
+                <li><a href="${rootPath}index.html">홈</a></li>
+                <li><a href="${rootPath}페이지/조편성/index.html">조편성</a></li>
+                <li><a href="${rootPath}페이지/학습지/index.html">학습지</a></li>
+            </ul>
+        </nav>
+    `;
+
+    // body 태그의 가장 첫 번째 자식으로 네비게이션 추가
+    document.body.insertAdjacentHTML('afterbegin', navHTML);
+});
