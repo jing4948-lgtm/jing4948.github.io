@@ -57,5 +57,49 @@ nav ul li a:hover {
 main {
     padding: 20px;
     flex: 1;
-    text-align: center;
+    /* --- 🌟 핵심 수정 부분: 컨텐츠를 수직/수평 중앙에 배치 --- */
+    display: flex; /* Flexbox 활성화 */
+    flex-direction: column; /* 내용을 위에서 아래로 정렬 */
+    justify-content: center; /* 수직 중앙 정렬 (위아래 중앙) */
+    align-items: center; /* 수평 중앙 정렬 (좌우 중앙) */
+    /* -------------------------------------------------- */
+    text-align: center; /* 내부 텍스트 가운데 정렬 (제목 등) */
+}
+
+/* 🚀 새로 추가: 카드 스타일 및 배치 */
+.card-container {
+    margin-top: 30px; /* 제목과 버튼 카드 사이 간격 */
+    display: flex;
+    flex-direction: column; /* 카드들을 세로로 쌓기 */
+    gap: 15px; /* 카드 사이의 간격 */
+    width: 100%;
+    max-width: 400px; /* 카드 너비 제한 */
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #2c5364; /* 텍스트 색상 */
+    padding: 20px;
+    border-radius: 8px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+    text-decoration: none; /* 링크 스타일 제거 */
+    display: block; /* a 태그가 블록 요소처럼 동작하게 */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* 호버 시 살짝 떠오르는 효과 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #0f2027;
+    font-size: 1.2rem;
+}
+
+.card p {
+    font-size: 0.9rem;
+    color: #607d8b;
 }
